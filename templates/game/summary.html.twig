@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="wrapper">
+        {%if games is defined %}
+            <ol>
+                {% for game in games %}
+                    <li>{{ game.homeTeam }} - {{ game.awayTeam }} {{ game.homeTeamScore }} : {{ game.awayTeamScore }}</li>
+                {% endfor %}
+            </ol>
+        {% endif %}
+    </div>
+{% endblock %}
+

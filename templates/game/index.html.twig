@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="wrapper">
+        {% if games is not empty %}
+            {% if games[0].updateTime is empty %}
+                <p style="padding-left: 50px">Upcoming games:</p>
+            {% endif %}
+            <ul>
+                {% for game in games %}
+                    <li style="display: flex; margin-top: 10px">{{ game.homeTeam }} - {{ game.awayTeam }} {{ game.homeTeamScore }} : {{ game.awayTeamScore }}
+                        {% if game.endTime is null %}
+                            <form action="{{ path('app_update_action', {id: game.id }) }}" method="POST" style="padding-left: 30px">
+                                <button
+                                        type="submit"
+                                        class="btn btn-outline-primary btn-sm"
+                                        style="margin-bottom: 5px"
+                                >Update</button>
+                            </form>
+                            <form action="{{ path('app_finish_action', {id: game.id }) }}" method="POST" style="padding-left: 30px">
+                                <button
+                                        type="submit"
+                                        class="btn btn-primary btn-sm"
+                                        style="margin-bottom: 5px"
+                                >Finish</button>
+                            </form>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div style="padding: 25px">
+                No data to show, please add a new game.
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

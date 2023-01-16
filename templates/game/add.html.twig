@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {{ form_start(formAdd) }}
+    <div class="wrapper">
+        <div class="col-md-2">
+            {{ form_row(formAdd.homeTeam) }}
+        </div>
+        <div class="col-md-2">
+            {{ form_row(formAdd.awayTeam) }}
+        </div>
+        <div class="col-md-12" style="padding-top: 5px">
+            {{ form_row(formAdd.save) }}
+        </div>
+    </div>
+    {{ form_end(formAdd) }}
+{% endblock %}
