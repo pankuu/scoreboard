@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="wrapper">
+        {{ form_start(formUpdate) }}
+        <div class="my-custom-class-for-errors">
+            {{ form_errors(formUpdate) }}
+        </div>
+        <div class="col-md-1">
+            {{ form_row(formUpdate.homeTeamScore, { 'label': game.homeTeam }) }}
+        </div>
+        <div class="col-md-1">
+            {{ form_row(formUpdate.awayTeamScore, { 'label': game.awayTeam }) }}
+        </div>
+        <div class="col-md-12" style="padding-top: 5px">
+            {{ form_row(formUpdate.update) }}
+        </div>
+        {{ form_end(formUpdate) }}
+    </div>
+{% endblock %}
+
