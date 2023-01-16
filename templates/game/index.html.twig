@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="wrapper">
+        {% if games is not empty %}
+            <p style="padding-left: 50px">Upcoming games:</p>
+        {% else %}
+            <div style="padding: 25px">
+                No data to show, please add a new game.
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
