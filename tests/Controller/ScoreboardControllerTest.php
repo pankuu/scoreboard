@@ -11,9 +11,28 @@ class ScoreboardControllerTest extends WebTestCase
         $client = static::createClient();
         $client->request('GET', '/');
 
-        dump($client->getResponse());
-
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('p', 'Scoreboard!');
+    }
+
+    public function testAddWithSubmitForm(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/add-event');
+
+        $client->submitForm('game[save]', [
+           'game[homeTeam]' => 'Poland',
+           'game[awayTeam]' => 'Mexico',
+        ]);
+
+        $this->assertResponseRedirects();
+    }
+
+    public function testAddWithoutSubmitForm(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/add-event');
+
+        $this->assertResponseIsSuccessful();
     }
 }

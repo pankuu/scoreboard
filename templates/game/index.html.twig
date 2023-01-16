@@ -4,6 +4,12 @@
     <div class="wrapper">
         {% if games is not empty %}
             <p style="padding-left: 50px">Upcoming games:</p>
+            <ul>
+                {% for game in games %}
+                    <li style="display: flex; margin-top: 10px">{{ game.homeTeam }} - {{ game.awayTeam }} {{ game.homeTeamScore }} : {{ game.awayTeamScore }}
+                    </li>
+                {% endfor %}
+            </ul>
         {% else %}
             <div style="padding: 25px">
                 No data to show, please add a new game.
