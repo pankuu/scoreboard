@@ -7,6 +7,7 @@
     * composer install
     * ./bin/console doctrine:database:create
     * ./bin/console doctrine:migrations:migrate
+    * copy .env.example to .env
 2. run project
     * php -S localhost:8000 -t public/ or symfony server:start
 
