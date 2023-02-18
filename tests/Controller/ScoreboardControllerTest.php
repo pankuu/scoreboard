@@ -29,8 +29,7 @@ class ScoreboardControllerTest extends WebTestCase
             'game[homeTeam]' => '',
             'game[awayTeam]' => '',
         ]);
-
-        $this->assertResponseIsUnprocessable();
+        $this->assertStringContainsString('This value should not be blank.', $client->getResponse()->getContent());
     }
 
     public function testAddWithoutSubmitForm(): void

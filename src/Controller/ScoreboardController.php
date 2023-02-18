@@ -8,7 +8,8 @@ use App\Entity\Game;
 use App\Form\GameType;
 use App\Form\GameUpdateType;
 use App\Repository\GameRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Service\ScoreboardService;
+use Doctrine\DBAL\Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,32 +17,36 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ScoreboardController extends AbstractController
 {
+    /**
+     * @param GameRepository $gameRepository
+     *
+     * @return Response
+     */
     #[Route('/', name: 'app_view_action')]
-    public function viewAction(EntityManagerInterface $entityManager): Response
+    public function viewAction(GameRepository $gameRepository): Response
     {
-        $games = $entityManager->getRepository(Game::class)->findBy(['endTime' => null]);
+        $games = $gameRepository->findBy(['endTime' => null]);
 
         return $this->render('game/index.html.twig', [
             'games' => $games,
         ]);
     }
 
+    /**
+     * @param Request $request
+     * @param ScoreboardService $scoreboardService
+     *
+     * @return Response
+     */
     #[Route('/add-event', name: 'app_add_action')]
-    public function addAction(Request $request, EntityManagerInterface $entityManager): Response
+    public function addAction(Request $request, ScoreboardService $scoreboardService): Response
     {
         $game = new Game();
         $form = $this->createForm(GameType::class, $game);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var Game $data */
-            $data = $form->getData();
-            $game->setHomeTeam($data->getHomeTeam());
-            $game->setAwayTeam($data->getAwayTeam());
-            $game->setStartTime(new \DateTime());
-
-            $entityManager->persist($game);
-            $entityManager->flush();
+            $scoreboardService->addAction($form, $game);
 
             $this->addFlash('success', 'Match added.');
 
@@ -49,10 +54,13 @@ class ScoreboardController extends AbstractController
         }
 
         return $this->render('game/add.html.twig', [
-            'formAdd' => $form,
+            'formAdd' => $form->createView(),
         ]);
     }
 
+    /**
+     * @throws Exception
+     */
     #[Route('/summary', name: 'app_summary_action')]
     public function summaryAction(GameRepository $gameRepository): Response
     {
@@ -61,16 +69,21 @@ class ScoreboardController extends AbstractController
         ]);
     }
 
+    /**
+     * @param Request $request
+     * @param Game $game
+     * @param ScoreboardService $scoreboardService
+     *
+     * @return Response
+     */
     #[Route('/update/{id}', name: 'app_update_action')]
-    public function updateAction(Request $request, Game $game, EntityManagerInterface $entityManager): Response
+    public function updateAction(Request $request, Game $game, ScoreboardService $scoreboardService): Response
     {
         $form = $this->createForm(GameUpdateType::class, $game);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $game->setUpdateTime(new \DateTime());
-            $entityManager->persist($game);
-            $entityManager->flush();
+            $scoreboardService->updateAction($game);
 
             $this->addFlash('success', 'Updated!');
 
@@ -83,10 +96,18 @@ class ScoreboardController extends AbstractController
         ]);
     }
 
+    /**
+     * @param Game $game
+     * @param GameRepository $gameRepository
+     *
+     * @return Response
+     */
     #[Route('/finish/{id}', name: 'app_finish_action')]
     public function finishAction(Game $game, GameRepository $gameRepository): Response
     {
         $gameRepository->finish($game->getId());
+
+        $this->addFlash('success', 'Game finished');
 
         return $this->redirectToRoute('app_summary_action');
     }
