@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Game;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Exception;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -65,7 +66,12 @@ class GameRepository extends ServiceEntityRepository
             ->fetchAllAssociative();
     }
 
-    public function finish(int $id): int
+    /**
+     * @param int|null $id
+     *
+     * @return int
+     */
+    public function finish(int|null $id): int
     {
         $qb = $this->createQueryBuilder('u');
 
